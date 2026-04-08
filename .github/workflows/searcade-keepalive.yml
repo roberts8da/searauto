@@ -1,0 +1,41 @@
+name: Searcade Keepalive (API)
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 每天 UTC 00:00 运行
+  workflow_dispatch:        # 支持手动触发
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Searcade API Keepalive
+        env:
+          SEARCADE_PANEL_URL: https://panel.searcade.com
+          SEARCADE_API_KEY: ${{ secrets.SEARCADE_API_KEY }}
+        run: python searcade_api_keepalive.py
+
+      - name: Record success timestamp
+        if: success()
+        run: |
+          echo "Last keepalive: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" > last_keepalive.txt
+          cat last_keepalive.txt
+
+      - name: Commit keepalive record
+        if: success()
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: keepalive $(date -u '+%Y-%m-%d')"
+          file_pattern: last_keepalive.txt
