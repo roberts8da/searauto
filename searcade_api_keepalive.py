@@ -1,15 +1,3 @@
-"""
-Searcade 保活脚本 - 使用 Pelican Panel Client API
-完全绕过 Cloudflare + OAuth，只需 HTTPS API 请求
-
-需要环境变量:
-  SEARCADE_PANEL_URL  - 面板地址，例如 https://panel.searcade.com
-  SEARCADE_API_KEY    - Client API Key（在 panel.searcade.com → Account → API Credentials 生成）
-
-可选:
-  SEARCADE_SERVER_ID  - 指定服务器 UUID（不填则遍历所有服务器）
-"""
-
 import os
 import sys
 import json
